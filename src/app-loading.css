@@ -1,0 +1,9 @@
+.app-loading-page { min-height: 100vh; display: grid; place-items: center; padding: 24px; color: #eafffb; background: radial-gradient(circle at 18% 20%, #103f3c 0, transparent 36%), linear-gradient(135deg, #06191d, #0b3032); }
+.app-loading-card { width: min(560px, 100%); padding: 42px; border: 1px solid rgba(80, 231, 202, .22); border-radius: 28px; background: rgba(7, 37, 38, .8); box-shadow: 0 24px 70px rgba(0, 0, 0, .25); }
+.app-loading-brand { display: flex; align-items: center; gap: 9px; margin-bottom: 38px; color: #50e7ca; font-weight: 800; letter-spacing: .18em; }
+.app-loading-line { height: 14px; margin-top: 15px; border-radius: 999px; background: linear-gradient(90deg, rgba(80,231,202,.08), rgba(80,231,202,.35), rgba(80,231,202,.08)); background-size: 220% 100%; animation: app-loading-shimmer 1.5s linear infinite; }
+.app-loading-line-title { width: 66%; height: 28px; }
+.app-loading-line-short { width: 48%; }
+.app-loading-card p { margin: 30px 0 0; color: #91b9b4; }
+@keyframes app-loading-shimmer { to { background-position: -220% 0; } }
+@media (prefers-reduced-motion: reduce) { .app-loading-line { animation: none; } }

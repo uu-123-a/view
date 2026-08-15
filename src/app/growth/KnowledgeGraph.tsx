@@ -1,0 +1,18 @@
+import { useEffect, useState, type CSSProperties } from "react";
+import { ArrowRight } from "lucide-react";
+import { apiFetch } from "../../services/api";
+import PageHead from "../shared/PageHead";
+
+export default function KnowledgeGraph({ onPractice }: { onPractice: (question: string, skill: string) => void }) {
+  const [data, setData] = useState<any>(null);
+  const [selected, setSelected] = useState<any>(null);
+  const [error, setError] = useState("");
+  useEffect(() => { apiFetch("/api/knowledge", undefined, 10000).then(async response => { const result = await response.json(); if (!response.ok) throw new Error(result.error || "无法读取能力数据。"); setData(result); if (result.nodes?.length) setSelected(result.nodes[0]); }).catch(reason => setError(reason.message)); }, []);
+  if (!data) return <div className="page narrow"><PageHead eyebrow="SKILL GRAPH" title="个人知识图谱" description={error || "正在分析你的能力数据…"} /></div>;
+  const statusText = (status: string) => status === "mastered" ? "已掌握" : status === "learning" ? "正在提升" : "推荐学习";
+  return <div className="page narrow page-knowledge"><PageHead eyebrow="KNOWLEDGE GRAPH" title={`${data.role} · 能力图谱`} description="结合简历、岗位要求、面试得分和错题动态生成，帮助你找到下一项最值得训练的能力。" />
+    <div className="knowledge-overview"><section className="panel knowledge-map"><div className="knowledge-map-head"><span className="eyebrow">SKILL CONNECTIONS</span><h3>岗位能力链路</h3><p>点击节点查看掌握度和专项练习入口</p></div><div className="knowledge-nodes">{data.nodes.map((node: any) => <div className={`knowledge-node ${node.status}`} key={node.id}><button onClick={() => setSelected(node)}>{node.score}</button><b>{node.name}</b><small>{node.category}</small></div>)}</div></section><aside className="knowledge-summary"><div className="panel knowledge-coverage"><span className="eyebrow">岗位覆盖度</span><div className="coverage-ring" style={{ "--coverage": `${data.coverage}%` } as CSSProperties}><strong>{data.coverage}%</strong></div><div className="knowledge-counts"><div><b>{data.summary.mastered}</b><span>已掌握</span></div><div><b>{data.summary.learning}</b><span>提升中</span></div><div><b>{data.summary.recommended}</b><span>待学习</span></div></div></div><div className="panel"><span className="eyebrow">训练重点</span><h3>{data.focus_skill}</h3><p className="optimization-suggestions">图谱会在你上传新简历、完成面试或解决错题后自动更新，无需手动维护。</p></div></aside></div>
+    {selected && <section className="panel knowledge-detail"><div className="knowledge-detail-grid"><strong className="knowledge-detail-score">{selected.score}<small>/100</small></strong><div><span className="eyebrow">{statusText(selected.status)} · {selected.category}</span><h2>{selected.name}</h2><p>{selected.status === "mastered" ? "简历和训练记录表明你已具备这项能力，下一步应准备更深入的技术取舍。" : selected.status === "learning" ? "你已有一定基础，但面试或错题表现仍不稳定，建议通过专项问答巩固。" : "目标岗位需要这项能力，但当前证据不足，建议先学习基础概念并完成一个可讲述的项目。"}</p></div><button className="primary" onClick={() => onPractice(selected.question, selected.name)}>开始专项训练<ArrowRight size={16} /></button></div></section>}
+    <section className="panel learning-path"><div className="panel-title"><div><span>推荐路径</span><h3>按顺序提升岗位覆盖度</h3></div></div>{data.nodes.filter((node: any) => node.status !== "mastered").map((node: any, index: number) => <div className="learning-step" key={node.id}><span>{index + 1}</span><div><b>{node.name}</b><small>{node.category} · 当前 {node.score} 分 · {statusText(node.status)}</small></div><button className="secondary" onClick={() => onPractice(node.question, node.name)}>去训练</button></div>)}{data.nodes.every((node: any) => node.status === "mastered") && <div className="report-empty compact">核心能力已经覆盖，建议进行高难度综合面试。</div>}</section>
+  </div>;
+}

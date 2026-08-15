@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+server/data/*.db
+server/backups/
+server/logs/
+test-results/
+playwright-report/
+.idea/
+__pycache__/
+*.py[cod]

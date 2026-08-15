@@ -1,0 +1,30 @@
+{
+  "name": "view",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/postbuild.mjs",
+    "preview": "vite preview",
+    "test:e2e": "playwright test",
+    "test:backend": "python -W ignore::ResourceWarning server/tools/run_unit_tests.py",
+    "test:types": "tsc --noEmit",
+    "test": "npm run test:types && npm run test:backend && npm run build",
+    "test:all": "npm test && npm run test:e2e"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "recharts": "latest",
+    "typescript": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0"
+  }
+}
