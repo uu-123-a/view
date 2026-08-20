@@ -11,6 +11,10 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 load_dotenv(Path(__file__).with_name(".env"))
 
+from .db.mysql_schema import ensure_mysql_schema
+
+ensure_mysql_schema()
+
 from .logging_config import configure_logging
 from .routes import register_routes
 from .security import register_security
@@ -78,4 +82,8 @@ def create_app() -> Flask:
 
 
 if __name__ == "__main__":
-    create_app().run(host="127.0.0.1", port=5000, debug=_boolean("MOSS_DEBUG", True))
+    create_app().run(
+        host=os.getenv("MOSS_HOST", "127.0.0.1"),
+        port=int(os.getenv("PORT", "5000")),
+        debug=_boolean("MOSS_DEBUG", True),
+    )
