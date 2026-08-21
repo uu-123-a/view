@@ -20,6 +20,11 @@ load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 _sqlite_connect = sqlite3.connect
 
 
+def _mysql_setting(primary: str, railway: str, default: str = "") -> str:
+    """Read the project variable first, then Railway's MySQL variable."""
+    return os.getenv(primary) or os.getenv(railway) or default
+
+
 class Row(dict):
     def __init__(self, value=()):
         super().__init__(value)
@@ -87,10 +92,10 @@ def _translate(sql: str) -> str | None:
 class Connection:
     def __init__(self, database: str):
         self._connection = pymysql.connect(
-            host=os.getenv("MYSQL_HOST", "127.0.0.1"),
-            port=int(os.getenv("MYSQL_PORT", "3306")),
-            user=os.getenv("MYSQL_USER", "root"),
-            password=os.getenv("MYSQL_PASSWORD", ""),
+            host=_mysql_setting("MYSQL_HOST", "MYSQLHOST", "127.0.0.1"),
+            port=int(_mysql_setting("MYSQL_PORT", "MYSQLPORT", "3306")),
+            user=_mysql_setting("MYSQL_USER", "MYSQLUSER", "root"),
+            password=_mysql_setting("MYSQL_PASSWORD", "MYSQLPASSWORD"),
             database=database,
             charset="utf8mb4",
             cursorclass=pymysql.cursors.DictCursor,
